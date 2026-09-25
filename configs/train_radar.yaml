@@ -1,0 +1,70 @@
+# RADAR 训练配置
+# 基于论文实验设置
+
+# 模型配置
+model:
+  name: enhanced
+  num_classes: 2
+  pretrained: true
+  use_ddafm: true
+  use_adaptive_mask: true
+  adaptive_mask_ratio: 0.15
+  adaptive_mask_grid: 14
+  adaptive_mask_hidden_factor: 1
+  adaptive_mask_tau: 1.0
+
+# 训练配置
+training:
+  num_epochs: 10000
+  batch_size: 32
+  learning_rate: 0.0002
+  optimizer: adamw
+  weight_decay: 0.0001
+  early_stop: true
+  seed: 44
+
+# 数据增强配置（训练阶段）
+train_augmentation:
+  rz_interp: ['bilinear']
+  loadSize: 256
+  blur_prob: 0.1
+  blur_sig: [0.0, 3.0]
+  jpg_prob: 0.1
+  jpg_method: ['cv2', 'pil']
+  jpg_qual: [30, 100]
+  random_crop_size: 224
+  random_horizontal_flip: true
+
+# 验证配置（验证阶段关掉随机增强）
+val_augmentation:
+  rz_interp: ['bilinear']
+  loadSize: 256
+  blur_prob: 0.0
+  blur_sig: [0.0]
+  jpg_prob: 0.0
+  jpg_method: ['pil']
+  jpg_qual: [100]
+  center_crop_size: 224
+
+# 数据集路径
+data:
+  train_root: ./data/train
+  val_root: ./data/val
+  test_root: ./data/test
+
+# 损失函数配置（基于论文IV.C节，6个损失项）
+loss:
+  num_tasks: 6
+  tasks:
+    - main_loss: 主分类损失 (CrossEntropy)
+    - pixel_local_loss: 像素域局部信息损失
+    - freq_local_loss: 频率域局部信息损失
+    - pixel_diversity_loss: 像素域特征多样性损失（解耦约束）
+    - freq_diversity_loss: 频率域特征多样性损失（解耦约束）
+    - cross_domain_loss: 跨域一致性损失
+
+# 检查点保存
+checkpoint:
+  save_dir: ./checkpoints_enhanced/mask_15
+  save_best: true
+  save_interval: 10

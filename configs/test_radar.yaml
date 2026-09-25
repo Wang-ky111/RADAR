@@ -1,0 +1,67 @@
+# RADAR 测试配置
+# 基于论文实验设置
+
+# 模型配置
+model:
+  name: enhanced
+  num_classes: 2
+  pretrained: false
+  use_ddafm: true
+  use_adaptive_mask: true
+  adaptive_mask_ratio: 0.15
+  adaptive_mask_grid: 14
+  adaptive_mask_hidden_factor: 1
+  adaptive_mask_tau: 1.0
+
+# 测试配置
+testing:
+  batch_size: 32
+  seed: 42
+  tta: true  # Test Time Augmentation (水平翻转平均)
+
+# 测试数据增强（测试阶段关掉随机增强，确保结果可复现）
+test_augmentation:
+  rz_interp: ['bilinear']
+  loadSize: 256
+  blur_prob: 0.0
+  blur_sig: [0.0]
+  jpg_prob: 0.0
+  jpg_method: ['pil']
+  jpg_qual: [100]
+  center_crop_size: 224
+
+# 检查点路径
+checkpoint:
+  path: ./checkpoints_enhanced/mask_15/enhanced_adaptive_spectralmask_ddafm_ddafm_best_combined.pth
+
+# 测试数据集列表
+datasets:
+  - name: SameAsTrain
+    path: ./data/test
+  - name: DALL-E
+    path: ./data_test/Ojha_CVPR2023/dalle
+  - name: Glide_50_27
+    path: ./data_test/Ojha_CVPR2023/glide_50_27
+  - name: Glide_100_10
+    path: ./data_test/Ojha_CVPR2023/glide_100_10
+  - name: Glide_100_27
+    path: ./data_test/Ojha_CVPR2023/glide_100_27
+  - name: Guided
+    path: ./data_test/Ojha_CVPR2023/guided
+  - name: LDM_100
+    path: ./data_test/Ojha_CVPR2023/ldm_100
+  - name: LDM_200
+    path: ./data_test/Ojha_CVPR2023/ldm_200
+  - name: LDM_200_cfg
+    path: ./data_test/Ojha_CVPR2023/ldm_200_cfg
+  - name: Human_Faces_Dataset
+    path: ./data_test/Human_Faces_Dataset
+  - name: FFHQ
+    path: ./data_test/FFHQ
+
+# 评估指标
+metrics:
+  - AP: Average Precision
+  - ACC: Accuracy
+  - AUC: ROC AUC Score
+  - F1: F1 Score
